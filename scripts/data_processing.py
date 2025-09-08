@@ -3,6 +3,9 @@ import glob
 import os
 
 def csv_import(filename):
+    if 'nova_venecia.csv' in filename.lower():
+        return None
+
     df = pd.read_csv(filename, sep=';', header=9, decimal=',')
     df = df.drop(columns='Unnamed: 22')
     return df
@@ -55,12 +58,25 @@ def concat_files():
     dfs = []
     for file in files:
         df = csv_import(file)
-        df = fill_values(df)
-        dfs.append(df)
+        if df is not None:
+            df = fill_values(df)
+            dfs.append(df)
     df_final = pd.concat(dfs, ignore_index=True)
     return df_final
 
 def process_data():
     df = concat_files()
-    df.to_csv('data/clean/processed_met_data.csv', index=False)
+
+    old_col_name = df.columns
+    new_col_name = ['date', 'time', 'precipitation_total', 'atmospheric_pressure_station_level', 'atmospheric_pressure_sea_level',
+                'atmospheric_pressure_max_prev_hour', 'atmospheric_pressure_min_prev_hour', 'global_radiation',
+               'station_CPU_temp', 'air_temp_dry_bulb', 'dew_point_temp', 'max_temp_prev_hour', 'min_temp_prev_hour',
+               'max_dew_point_temp_prev_hour', 'min_dew_point_temp_prev_hour', 'station_battery_voltage',
+                'max_relative_humidity_prev_hour', 'min_relative_humidity_prev_hour', 'relative_humidity', 'wind_direction',
+               'wind_max_gust', 'wind_speed']
+
+    df = df.rename(columns = dict(zip(old_col_name, new_col_name)))
+    #df.to_csv('data/clean/processed_met_data.csv', index=False)
     return df
+
+print(process_data())
