@@ -52,9 +52,10 @@ def fill_values(df):
     return df
 
 def concat_files():
-    path = 'data/raw/meteorological_stations'
-    files = glob.glob(os.path.join(path, '*.csv'))
+    base_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+    path = os.path.join(base_dir, 'data/raw/meteorological_stations')
 
+    files = glob.glob(os.path.join(path, '*.csv'))
     dfs = []
     for file in files:
         df = csv_import(file)
@@ -65,6 +66,8 @@ def concat_files():
     return df_final
 
 def process_data():
+    base_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
+    path = os.path.join(base_dir, 'data/clean/processed_met_data.csv')
     df = concat_files()
 
     old_col_name = df.columns
@@ -76,7 +79,8 @@ def process_data():
                'wind_max_gust', 'wind_speed']
 
     df = df.rename(columns = dict(zip(old_col_name, new_col_name)))
-    #df.to_csv('data/clean/processed_met_data.csv', index=False)
-    return df
 
-print(process_data())
+    if not os.path.isfile(path):
+        df.to_csv(path, index=False)
+
+    return df
