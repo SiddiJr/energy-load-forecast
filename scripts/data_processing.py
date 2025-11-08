@@ -68,6 +68,10 @@ def concat_files():
 def process_data():
     base_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
     path = os.path.join(base_dir, 'data/clean/processed_met_data.csv')
+
+    if os.path.isfile(path):
+        return pd.read_csv(path, sep=',')
+
     df = concat_files()
 
     old_col_name = df.columns
