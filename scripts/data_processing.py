@@ -10,46 +10,14 @@ def csv_import(filename):
     df = df.drop(columns='Unnamed: 22')
     return df
 
-def outlier_processing(value, upper_bounds, lower_bounds, mean):
-    if value > upper_bounds:
-        return mean
-    elif value < lower_bounds:
-        return mean
-    else:
-        return value
-
 def fill_values(df):
     numeric_cols = df.select_dtypes(include='number').columns
     ffill = df[numeric_cols].ffill()
     bfill = df[numeric_cols].bfill()
     mean_fill = (bfill + ffill) / 2
+    mean_fill = mean_fill.fillna(mean_fill.mean())
 
-    Q3 = df[numeric_cols].quantile(0.75)
-    Q1 = df[numeric_cols].quantile(0.25)
-
-    IQR = Q3 - Q1
-    lower_bound = Q1 - (IQR * 1.5)
-    upper_bound = Q3 + (IQR * 1.5)
-    mean = df[numeric_cols].median()
-
-
-    for col in numeric_cols:
-        df[col] = df[col].fillna(mean_fill[col])
-        df[col] = df[col].apply(lambda x: outlier_processing(x, upper_bound[col], lower_bound[col], mean[col]))
-
-    df['Data Medicao'] = pd.to_datetime(df['Data Medicao'])
-    df['month']= df['Data Medicao'].dt.month
-    df['year']= df['Data Medicao'].dt.year
-
-    group = df.groupby(['month', 'year'])
-
-    for column in df.columns:
-        df[column] = df[column].fillna(group[column].transform('mean'))
-
-    for col in numeric_cols:
-        df[col] = df[col].fillna(df[col].mean())
-
-    return df
+    return mean_fill
 
 def concat_files():
     base_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
