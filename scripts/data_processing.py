@@ -12,12 +12,17 @@ def csv_import(filename):
 
 def fill_values(df):
     numeric_cols = df.select_dtypes(include='number').columns
+    non_numeric_cols = df.select_dtypes(exclude='number').columns
+    df_non_numeric = df[non_numeric_cols]
+
     ffill = df[numeric_cols].ffill()
     bfill = df[numeric_cols].bfill()
     mean_fill = (bfill + ffill) / 2
     mean_fill = mean_fill.fillna(mean_fill.mean())
 
-    return mean_fill
+    final_df = pd.concat([df_non_numeric, mean_fill], axis=1)
+
+    return final_df
 
 def concat_files():
     base_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
@@ -35,7 +40,7 @@ def concat_files():
 
 def process_data():
     base_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
-    path = os.path.join(base_dir, 'data/clean/processed_met_data.csv')
+    path = os.path.join(base_dir, 'data/clean/pre_processed_met_data.csv')
 
     if os.path.isfile(path):
         return pd.read_csv(path, sep=',')
