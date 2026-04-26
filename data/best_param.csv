@@ -1,0 +1,2 @@
+regressor_lstm__optimizer__learning_rate,regressor_lstm__model__units,regressor_lstm__model__dropout_rate,regressor_lstm__epochs,regressor_lstm__batch_size
+0.01,32,0.25,50,64

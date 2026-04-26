@@ -1,2 +1,4 @@
-.ipynb_checkpoints
+.Trash-0
 .git
+__pycache__
+*.ipynb_checkpoints
