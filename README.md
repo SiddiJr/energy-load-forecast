@@ -105,6 +105,7 @@ This project is the practical implementation of the research paper:
 *Published under the Creative Commons Attribution 4.0 International License (CC BY 4.0).*
 
 **Author:** Sidnei José de Castro Ribeiro Junior  
-🔗 [LinkedIn](https://www.linkedin.com/in/sidjr/) | ✉️ [sidnei.junior@alunos.utfpr.edu.br](mailto:sidnei.junior@alunos.utfpr.edu.br)  
+🔗 [LinkedIn](https://www.linkedin.com/in/sidjr/) | ✉️ [sidnei.castro.jr@outlook.com](mailto:sidnei.castro.jr@outlook.com)  
 
 **Advisor:** Adolfo Neto (UTFPR)
+🔗 [LinkedIn](https://www.linkedin.com/in/adolfont/) | ✉️ [adolfo@utfpr.edu.br](mailto:adolfo@utfpr.edu.br)  
