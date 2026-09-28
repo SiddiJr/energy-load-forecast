@@ -1,111 +1,110 @@
-# Trade-Off Analysis of Statistical and Machine Learning Models in Energy Load Forecasting
+# ⚡ Energy Load Forecasting: Accuracy vs. Computational Cost Trade-off
 
-**Author:** Sidnei José de Castro Ribeiro Junior  
-**Institution:** Technological Federal University of Paraná (UTFPR)  
-**Advisor:** Adolfo Neto
+[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/)
+[![XGBoost](https://img.shields.io/badge/Model-XGBoost-green.svg)](https://xgboost.readthedocs.io/)
+[![Deep Learning](https://img.shields.io/badge/Model-LSTM-red.svg)](https://www.tensorflow.org/)
+[![Docker](https://img.shields.io/badge/Container-Docker-2496ED.svg)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-![Status](https://img.shields.io/badge/Status-In%20Progress-yellow)
-
-## Overview
-
-This project performs a trade-off analysis between statistical and machine learning (ML) models for short-term energy load forecasting in the Southeast region of Brazil. The two fronts of comparison are **accuracy** and **computational cost**.
-
-The hypothesis is that statistical models will be faster but less accurate than ML models, due to their relative simplicity and lower degree of flexibility.
+> **TL;DR (Business Conclusion):** This project evaluates the trade-off between accuracy and computational cost for short-term energy load forecasting in Southeast Brazil. **Result:** **XGBoost** delivers the best ROI for production environments, achieving a **3.12% MAPE** while reducing training time by **~99.9%** (from 781s to 0.14s) compared to SARIMAX, proving that complex Deep Learning (LSTM) is not always necessary for optimal real-time forecasting.
 
 ---
 
-## Models
+## 📊 Key Results & Trade-off Analysis
 
-| Model | Paradigm |
-|---|---|
-| Linear Regression (LR) | Statistical (baseline) |
-| SARIMAX | Statistical |
-| XGBoost | Machine Learning |
-| LSTM | Machine Learning |
+The core of this project is not just predicting the load, but evaluating **which model is viable for real-world deployment**. Below is the comparison of the best-performing models:
 
----
+| Model | Paradigm | MAPE (Accuracy) | Training Time | Inference Time | Hardware Bottleneck |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| **XGBoost (CPU)** | Machine Learning | **3.12%** ✅ | **0.14s** ✅ | **0.006s** ✅ | None (Highly Efficient) |
+| **LSTM** | Deep Learning | 3.63% | 16.98s | 0.18s | CPU/GPU overhead |
+| **SARIMAX** | Statistical | 5.33% | 781.82s ❌ | 0.51s | Severe convergence issues |
+| **Linear Regression**| Statistical (Base)| 6.21% | 0.01s | 0.0003s | Fails to capture seasonality |
 
-## Dataset
-
-- **Energy demand data:** National Electric System Operator ([ONS](https://dados.ons.org.br/dataset/curva-carga)) — hourly data from 2023 to 2024, Southeast region only.
-- **Meteorological data:** National Institute of Meteorology ([INMET](https://bdmep.inmet.gov.br/)) — hourly data from January 2023 to December 2024, all stations in the Southeast region.
+*💡 **Takeaway:** XGBoost provides state-of-the-art accuracy with a fraction of the computational cost, making it the ideal candidate for systems requiring frequent retraining or real-time inference.*
 
 ---
 
-## Evaluation Metrics
+## 💡 Business Context
 
-**Accuracy:**
-- RMSE — Root Mean Squared Error
-- MAE — Mean Absolute Error
-- MAPE — Mean Absolute Percentage Error
-
-**Computational Cost:**
-- Training time
-- Inference time
+Accurate short-term (hour-ahead) energy load forecasting is critical for:
+1. **Preventing Blackouts:** Avoiding under-estimation of demand that overloads power lines.
+2. **Cost Optimization:** Avoiding over-estimation, which leads to unnecessary energy conversion and wasted resources.
+3. **Sustainability:** Aligning with UN SDGs 7 (Affordable Energy) and 13 (Climate Action) by optimizing grid efficiency.
 
 ---
 
-## Feature Engineering
+## 🛠️ Tech Stack & Environment
 
-- Lag features: 1h, 2h, 3h, 6h, 12h, 24h, and 48h prior
-- Perceived temperature (Wind Chill / Heat Index)
-- Meteorological season (meteorological calendar, Southern Hemisphere)
-- Weekend boolean indicator
-- Dummy encoding for categorical variables
+- **Languages & Core:** Python 3.13, Pandas, NumPy, Scikit-learn
+- **Modeling:** XGBoost, TensorFlow/Keras (LSTM), Statsmodels (SARIMAX/LR)
+- **Interpretability:** SHAP (SHapley Additive exPlanations), Feature Importance
+- **Deployment/Reproducibility:** Docker, Docker Compose, Jupyter Lab
+- **Hardware Tested:** Intel i5-14400F, 32GB DDR4 RAM, NVIDIA RTX 5060
 
 ---
 
-## Environment & Setup
+## 🔍 Methodology Highlights
 
-| Component | Version |
-|---|---|
-| Python | 3.13.7 |
-| Jupyter Lab | 4.4.6 |
-| Docker | 28.5.1 |
-| OS | EndeavourOS 2025.03.19 |
+- **Real-World Data:** Integrated hourly data (2023-2024) from **ONS** (National Electric System Operator) and **INMET** (National Institute of Meteorology) for 15 stations in the Southeast region.
+- **Advanced Feature Engineering:** Created lag features (1h to 48h), calculated Perceived Temperature (Wind Chill / Heat Index), and encoded meteorological seasons.
+- **Robust Validation:** Used `TimeSeriesSplit` to strictly prevent data leakage, a common pitfall in time-series forecasting.
+- **Explainable AI (XAI):** Went beyond the "black box". Used **SHAP values** for LSTM and native Feature Importance for XGBoost to ensure model predictions are auditable and aligned with business logic.
 
-**Hardware:**
-- CPU: Intel i5-14400F
-- RAM: 32 GB DDR4
-- GPU: NVIDIA RTX 5060
+---
 
-### Installation
+## 📈 Visual Insights
 
-#### Using Docker Compose (Recommended)
-```bash
-# Clone the repository
-git clone https://github.com/SiddiJr/energy-load-forecast
+*(Note to Recruiter/Manager: The graphs below demonstrate the data patterns, rigorous feature selection, and model interpretability)*
+
+![Hourly Load Demand Patterns](./figures/energy_hour_violinplot.png)
+
+*Figure 1: Hourly load demand distribution, revealing clear peak patterns (around 6-7 PM) and distinct behavioral differences between weekdays and weekends.*
+
+![Correlation Matrix After Feature Selection](./figures/corr_matrix_after_deletion.png)
+
+*Figure 2: Correlation matrix heatmap after removing multicollinear features (like redundant lag hours), ensuring a robust and non-redundant feature set for the models.*
+
+---
+
+## 🚀 How to Run
+
+The project is fully containerized for reproducibility. 
+
+## Option 1: Docker Compose (Recommended)
+### 1. Clone the repository
+
+git clone https://github.com/SiddiJr/energy-load-forecast.git
 cd energy-load-forecast
 
-# Build and start the container
+### 2. Build and start the container in the background
+
 docker-compose up -d
 
-# Access Jupyter Lab at http://localhost:8888
-```
+### 3. Access Jupyter Lab in your browser
+http://localhost:8888
 
-#### Manual Installation
-```bash
-# Clone the repository
-git clone https://github.com/SiddiJr/energy-load-forecast
+## Option 2: Manual Installation
+
+If you prefer to run the project locally without Docker, follow these steps:
+
+### 1. Clone the repository
+git clone https://github.com/SiddiJr/energy-load-forecast.git
 cd energy-load-forecast
 
-# Install dependencies
+### 2. Install dependencies (Recommended: use a virtual environment)
 pip install -r requirements.txt
 
-# Launch Jupyter Lab
+### 3. Launch Jupyter Lab
 jupyter lab
-```
----
 
-## Methodology Summary
+## 📚 References & Author
 
-1. **Data collection** — ONS load demand + INMET meteorological data
-2. **Pre-processing** — imputation, feature selection via correlation analysis, column renaming
-3. **Feature engineering** — lag features, perceived temperature, seasonal dummies
-4. **Cross-validation** — scikit-learn `TimeSeriesSplit` to prevent data leakage
-5. **Hyperparameter tuning** — Random Search for XGBoost and LSTM; autocorrelation/partial autocorrelation analysis for SARIMAX
-6. **Evaluation** — RMSE, MAE, MAPE, training time, inference time
-7. **Interpretability** — statsmodels summaries (LR, SARIMAX), XGBoost Feature Importance, SHAP values (LSTM)
+This project is the practical implementation of the research paper:  
+**"Trade-Off Analysis of Statistical and Machine Learning Models in Energy Load Forecasting for the Brazilian Southeast Region: Accuracy vs Computing Cost vs Interpretability"**  
+*Published under the Creative Commons Attribution 4.0 International License (CC BY 4.0).*
 
-## Sobre
-Sidnei Junior - https://www.linkedin.com/in/sidjr/
+**Author:** Sidnei José de Castro Ribeiro Junior  
+🔗 [LinkedIn](https://www.linkedin.com/in/sidjr/) | ✉️ [sidnei.junior@alunos.utfpr.edu.br](mailto:sidnei.junior@alunos.utfpr.edu.br)  
+
+**Advisor:** Adolfo Neto (UTFPR)
